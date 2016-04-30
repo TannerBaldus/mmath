@@ -1,6 +1,7 @@
 var request = require("request");
 var cheerio = require("cheerio");
 var neo4j = require('neo4j-driver').v1;
+var UUID = require('uuid-js');
 var driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "neo4j"));
 var session = driver.session();
 
@@ -24,6 +25,9 @@ function parseWin(tr){
     win.opponentId = getID(opponentEl.attr('href'));
     win.opponentName = opponentEl.text().trim();
     win.method = tr.find('td').eq(4).text();
+    if(!win.opponentId){
+        win.opponentId = UUID.create().toString();
+    }
     return win;
     }
 
