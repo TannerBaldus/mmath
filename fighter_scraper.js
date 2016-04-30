@@ -2,7 +2,7 @@ var request = require("request");
 var cheerio = require("cheerio");
 
 function getUrls(){
-    getUrl = function(val, i){return $(val).attr('href')};
+    getUrl = function(val, i){return $(val).attr('href');};
     return $.map(('.evenrow a, .oddrow a'), getUrl);
 }
 
@@ -14,9 +14,9 @@ function getID(url){
 
 function parseWin(tr){
     win = { opponentId:"",
-	    opponentName: "",
-	    method:""
-	  };
+	       opponentName: "",
+	       method:""
+	 };
     opponentEl = tr.find('td a').eq(1);
     win.opponentId = getID(opponentEl.attr('href'));
     win.opponentName = opponentEl.text().trim();
