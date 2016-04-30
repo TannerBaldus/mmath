@@ -56,7 +56,7 @@ function fighter(url_end){
                 fighter.nickname = $(".player-metadata li:contains('Nickname')").contents().eq(1).text();
                 $('.evenrow, .oddrow').each(function(i, val){
                     if(isWin($(val))){
-                        fighter.wins.push(parseWin($(val)));
+                        fighter.wins.push(parseWin(fighter.fighterID, $(val)));
                     }
                 });
                 resolve(fighter);
@@ -68,6 +68,7 @@ function fighter(url_end){
     });
     return p1;
 }
+
 
 function get_fighters(fighter, callback){
     url = "http://espn.go.com/mma/fighters";
