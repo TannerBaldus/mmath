@@ -36,6 +36,25 @@ function historyUrl(url){
     return "http://espn.go.com/mma/fighter/history/_/id/"+getID(url);
 }
 
+function winToDB(win){
+    query = [
+        "MATCH (winner:Fighter {fighterID: {winnerID} })",
+        "MERGE (loser:Fighter {fighterID: {loserID}, name: {loserName} })",
+        "CREATE (winner)-[b:Beat {method: {method} }]->(loser)",
+        "RETURN winner.fighterID,b.method,loser.fighterID"
+    ].join('\n');
+    queryPromise = session.run(query, win);
+    queryPromise.then(function (result) {
+        result.records.forEach(function(record) {
+            console.log(record);
+        });
+    })
+    .catch(function (val) {
+        console.log(val);
+    });
+}
+
+
 function fighter(url_end){
     var p1 = new Promise(function(resolve, reject){
         url = historyUrl(url_end);
