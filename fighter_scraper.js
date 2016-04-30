@@ -16,21 +16,21 @@ function getID(url){
 }
 
 
-function parseWin(tr){
-    win = { opponentId:"",
-	       opponentName: "",
-	       method:""
+function parseWin(winnerID, tr){
+    win = { loserID:"",
+	       loserName: "",
+	       method:"",
+           winnerID:winnerID
 	 };
-    opponentEl = tr.find('td a').eq(1);
-    win.opponentId = getID(opponentEl.attr('href'));
-    win.opponentName = opponentEl.text().trim();
+    loserEl = tr.find('td a').eq(1);
+    win.loserID = getID(loserEl.attr('href'));
+    win.loserName = loserEl.text().trim();
     win.method = tr.find('td').eq(4).text();
-    if(!win.opponentId){
-        win.opponentId = UUID.create().toString();
+    if(!win.loserID){
+        win.loserID = UUID.create().toString();
     }
     return win;
     }
-
 
 function historyUrl(url){
     return "http://espn.go.com/mma/fighter/history/_/id/"+getID(url);
