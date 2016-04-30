@@ -1,5 +1,8 @@
 var request = require("request");
 var cheerio = require("cheerio");
+var neo4j = require('neo4j-driver').v1;
+var driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "neo4j"));
+var session = driver.session();
 
 function getUrls(){
     getUrl = function(val, i){return $(val).attr('href');};
@@ -75,4 +78,10 @@ function get_fighters(fighter, callback){
 }
 
 
-fighter("http://espn.go.com/mma/fighter/history/_/id/2335639/jon-jones", sherdogImage, function(fighter){console.log(fighter);});
+var fp = fighter("http://espn.go.com/mma/fighter/history/_/id/2335639/jon-jones");
+fp.then(
+    function(val){console.log(val);}
+)
+.catch(
+    function(val){console.log(val);}
+)
