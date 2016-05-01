@@ -54,6 +54,35 @@ function winToDB(win){
     });
 }
 
+function  fighterToDB(fighter){
+    console.log("fighterToDB");
+    var p1 = new Promise(function(resolve, reject){
+        var query = [
+            "MERGE (f:Fighter {fighterID: {fighterID} })",
+            "SET f += {props}",
+            "RETURN f"
+        ].join('\n');
+        console.log(query, fighter);
+        var queryPromise = session.run(query, fighter);
+        queryPromise.then(
+            function(val){
+                console.log(val);
+                fighter.wins.forEach(function(win){
+                    winToDB(win);
+                    resolve(fighter);
+                });
+            }
+        )
+        .catch(
+            function(err){
+                console.log(err);
+                reject(err);
+            }
+        );
+    });
+    return p1;
+}
+
 
 function fighter(url_end){
     var p1 = new Promise(function(resolve, reject){
@@ -106,8 +135,11 @@ function get_fighters(fighter, callback){
 
 var fp = fighter("http://espn.go.com/mma/fighter/history/_/id/2335639/jon-jones");
 fp.then(
-    function(val){console.log(val);}
+    function(fighter){
+        console.log(fighter);
+        fighterToDB(fighter);
+    }
 )
 .catch(
     function(val){console.log(val);}
-)
+);
