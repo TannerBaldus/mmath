@@ -63,16 +63,18 @@ function fighter(url_end){
                 var $ = cheerio.load(html);
                 isWin = function(tr){return $(tr).find('td').eq(3).text()=='Win';};
                 var fighter = {
-                     name: "",
-                     nickname: "",
-                     wins : [],
-                     id: "",
-                     img: "",
+                    fighterID: "",
+                     props:{
+                         name: "",
+                         nickname: "",
+                         img: ""
+                     },
+                    wins: []
                 };
-                fighter.id = getID(url);
-                fighter.name = $('.mod-content h1').html();
-                fighter.img = $(".main-headshot img").attr("src");
-                fighter.nickname = $(".player-metadata li:contains('Nickname')").contents().eq(1).text();
+                fighter.fighterID = getID(url);
+                fighter.props.name = $('.mod-content h1').html();
+                fighter.props.img = $(".main-headshot img").attr("src");
+                fighter.props.nickname = $(".player-metadata li:contains('Nickname')").contents().eq(1).text();
                 $('.evenrow, .oddrow').each(function(i, val){
                     if(isWin($(val))){
                         fighter.wins.push(parseWin(fighter.fighterID, $(val)));
