@@ -6,9 +6,20 @@ var UUID = require('uuid-js');
 var driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "neo4j"));
 var session = driver.session();
 
-function getUrls(){
-    getUrl = function(val, i){return $(val).attr('href');};
-    return $.map(('.evenrow a, .oddrow a'), getUrl);
+moment.locale('us');
+
+/**
+ * Randomize array element order in-place.
+ * Using Durstenfeld shuffle algorithm.
+ */
+function shuffleArray(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+    return array;
 }
 
 function getID(url){
