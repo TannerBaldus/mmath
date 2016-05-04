@@ -1,5 +1,6 @@
 var request = require("request");
 var cheerio = require("cheerio");
+var moment = require('moment');
 var neo4j = require('neo4j-driver').v1;
 var UUID = require('uuid-js');
 var driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "neo4j"));
@@ -17,11 +18,14 @@ function getID(url){
 
 
 function parseWin(winnerID, tr){
-    win = { loserID:"",
-	       loserName: "",
-	       method:"",
-           winnerID:winnerID
+    win = {
+        date: "",
+        loserID:"",
+        loserName: "",
+        method:"",
+        winnerID:winnerID
 	 };
+    win.date = moment(tr.find('td').eq(0).text(), 'MMM, DD YYY').toISOString();
     loserEl = tr.find('td a').eq(1);
     win.loserID = getID(loserEl.attr('href'));
     win.loserName = loserEl.text().trim();
@@ -40,7 +44,7 @@ function winToDB(win){
     query = [
         "MATCH (winner:Fighter {fighterID: {winnerID} })",
         "MERGE (loser:Fighter {fighterID: {loserID}, name: {loserName} })",
-        "CREATE (winner)-[b:Beat {method: {method} }]->(loser)",
+        "MERGE (winner)-[b:Beat {method: {method}, date: {date} }]->(loser)",
         "RETURN winner.fighterID,b.method,loser.fighterID"
     ].join('\n');
     queryPromise = session.run(query, win);
