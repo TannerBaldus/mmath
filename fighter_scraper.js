@@ -7,11 +7,16 @@ var UUID = require('uuid-js');
 var driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "neo4j"));
 var session = driver.session();
 
+
+
 moment.locale('us');
 
-/**
- * Randomize array element order in-place.
- * Using Durstenfeld shuffle algorithm.
+
+ /**
+ * Shuffles an array using the Durstenfeld shuffle algorithm. Used for
+ * opening urls in a random order as not to get blocked
+ * @param {array} an Array instance
+ * @return {boolean}  an Array instance witht the contents shuffled.
  */
 function shuffleArray(array) {
     for (var i = array.length - 1; i > 0; i--) {
@@ -23,14 +28,37 @@ function shuffleArray(array) {
     return array;
 }
 
+
+/**
+* From an espn url gets the id for the fighter
+* @param {string} url the url to get the ID from
+* @return {string}  the ID from the URL of the fighter
+*/
 function getID(url){
-    idIndex = url.indexOf("_/id");
+    var idIndex = url.indexOf("_/id");
     return url.slice(idIndex+5, idIndex+12);
 }
 
 
+/**
+ * @typedef Win
+ * @type Object
+ * @property {string} date the date of the win
+ * @property {string} loserID the ID of the losing fighter
+ * @property {string} loserName the name of the losing fighter
+ * @property {string} method the method of victory e.g. KO, TKO
+ * @property {string} winnerID the ID of the winning fighter
+ */
+
+
+/**
+* Constructs a Win object from a table row and winnerID
+* @param {string} winnerID the ID of the winning fighter
+* @param {Object} tr a cheerio tr object
+* @return {Win} the parsed win object
+*/
 function parseWin(winnerID, tr){
-    win = {
+    var win = {
         date: "",
         loserID:"",
         loserName: "",
@@ -38,51 +66,64 @@ function parseWin(winnerID, tr){
         winnerID:winnerID
 	 };
     win.date = moment(tr.find('td').eq(0).text(), 'MMM, DD YYY').toISOString();
-    loserEl = tr.find('td a').eq(1);
+    var loserEl = tr.find('td a').eq(1);
     win.loserID = getID(loserEl.attr('href'));
     win.loserName = loserEl.text().trim();
     win.method = tr.find('td').eq(4).text();
-    if(!win.loserID){
-        win.loserID = UUID.create().toString();
-    }
     return win;
     }
 
+/**
+* Gets the full fight history url from another url
+* @param {string} url an espn url to a fighter
+* @return {string} the full fight history page of the fighter
+*/
 function historyUrl(url){
     return "http://espn.go.com/mma/fighter/history/_/id/"+getID(url);
 }
 
+
+/**
+* Saves a Win object into the neo4j databsse
+* @param {Win} win a Win object
+* @return {Promise} a promise that resolves on succesful query
+*/
 function winToDB(win){
-    query = [
+    var query = [
         "MATCH (winner:Fighter {fighterID: {winnerID} })",
         "MERGE (loser:Fighter {fighterID: {loserID}, name: {loserName} })",
         "MERGE (winner)-[b:Beat {method: {method}, date: {date} }]->(loser)",
         "RETURN winner.fighterID,b.method,loser.fighterID"
     ].join('\n');
-    queryPromise = session.run(query, win);
-    queryPromise.then(function (result) {
-        result.records.forEach(function(record) {
-            console.log(record);
-        });
+    var queryPromise = session.run(query, win);
+    return queryPromise.then(function (result) {
+        console.log('Successfully saved win');
+        Promise.resolve('Success');
     })
     .catch(function (val) {
-        console.log(val);
+        console.error(val);
+        Promise.reject('Failure');
     });
 }
 
+
+
+/**
+* Saves a Win object into the neo4j databsse
+* @param {Win} win a Win object
+* @return {Promise} a promise that resolves on succesful query
+*/
 function  fighterToDB(fighter){
-    console.log("fighterToDB");
     var p1 = new Promise(function(resolve, reject){
         var query = [
             "MERGE (f:Fighter {fighterID: {fighterID} })",
             "SET f += {props}",
             "RETURN f"
         ].join('\n');
-        console.log(query, fighter);
         var queryPromise = session.run(query, fighter);
         queryPromise.then(
             function(val){
-                console.log(val);
+                console.log("Success Saved Fighter");
                 fighter.wins.forEach(function(win){
                     winToDB(win);
                     resolve(fighter);
@@ -91,7 +132,7 @@ function  fighterToDB(fighter){
         )
         .catch(
             function(err){
-                console.log(err);
+                console.error(err);
                 reject(err);
             }
         );
