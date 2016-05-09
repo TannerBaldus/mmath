@@ -194,16 +194,32 @@ function parseListPage(letter){
 }
 
 
+function main(){
+    var alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
+    'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+    Promise.all(alphabet.map(parseListPage)).then(
+        function(results){
+            var urls = [].concat.apply([], results);
+            return shuffleArray(urls);
+        }).then(
+            function(urls){
+                return Promise.all(urls.map(getFighter));
+        }).then(function(val){
+            console.log("Done");
+            session.close();
+            process.exit();
+        }).catch(function(err){
+            console.error(err);
+            console.error(err.stack);
+        });
 }
 
+module.exports = {
+    parseFighter: parseFighter,
+    fighterToDB: fighterToDB,
+    getFighter: getFighter
+};
 
-var fp = fighter("http://espn.go.com/mma/fighter/history/_/id/2335639/jon-jones");
-fp.then(
-    function(fighter){
-        console.log(fighter);
-        fighterToDB(fighter);
-    }
-)
-.catch(
-    function(val){console.log(val);}
-);
+if (require.main === module) {
+    main();
+}
