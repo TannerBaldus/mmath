@@ -1,4 +1,5 @@
-var request = require("request");
+"use strict";
+var requestp = require("request-promise");
 var cheerio = require("cheerio");
 var moment = require('moment');
 var neo4j = require('neo4j-driver').v1;
