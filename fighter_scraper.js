@@ -168,19 +168,31 @@ function parseFighter(urlEnd){
     );
 }
 
-function isWin(tr){
-    return tr.find('td').eq(3).text()=='Win';
+
+function getFighter(url){
+    return parseFighter(url).then(
+        function(fighter){
+            return fighterToDB(fighter);
+        }
+    );
 }
 
-function get_fighters(fighter, callback){
-    url = "http://espn.go.com/mma/fighters";
-    request(url, function(error, response, html){
-        if (!error && response.statusCode == 200) {
-            var $ = cheerio.load(html);
-	    $('.evenrow a, .oddrow a').each(function(i, val){
-		fighter($(val).attr('href'));});
-	   }
-	});
+function parseListPage(letter){
+    console.log(letter);
+    var url = "http://espn.go.com/mma/fighters?search="+letter;
+    var urlsPromise = requestp(url).then(function(body){
+        var $ = cheerio.load(body);
+        var urls = [];
+        var getUrl = function(val){return $(val).attr('href');};
+        $('.evenrow a, .oddrow a').each(function(i, val){
+            urls.push(getUrl(val));
+        });
+
+        return urls;
+    });
+    return urlsPromise;
+}
+
 
 }
 
