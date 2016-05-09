@@ -140,6 +140,9 @@ function  fighterToDB(fighter){
     return p1;
 }
 
+function isWin(tr){
+    return tr.find('td').eq(3).text()=='Win';
+}
 
 function fighter(url_end){
     var p1 = new Promise(function(resolve, reject){
