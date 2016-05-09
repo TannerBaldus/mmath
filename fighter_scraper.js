@@ -144,39 +144,28 @@ function isWin(tr){
     return tr.find('td').eq(3).text()=='Win';
 }
 
-function fighter(url_end){
-    var p1 = new Promise(function(resolve, reject){
-        url = historyUrl(url_end);
-        request(url, function(error, response, html){
-            if (!error && response.statusCode == 200) {
-                var $ = cheerio.load(html);
-                isWin = function(tr){return $(tr).find('td').eq(3).text()=='Win';};
-                var fighter = {
-                    fighterID: "",
-                     props:{
-                         name: "",
-                         nickname: "",
-                         img: ""
-                     },
-                    wins: []
-                };
-                fighter.fighterID = getID(url);
-                fighter.props.name = $('.mod-content h1').html();
-                fighter.props.img = $(".main-headshot img").attr("src");
-                fighter.props.nickname = $(".player-metadata li:contains('Nickname')").contents().eq(1).text();
-                $('.evenrow, .oddrow').each(function(i, val){
-                    if(isWin($(val))){
-                        fighter.wins.push(parseWin(fighter.fighterID, $(val)));
-                    }
-                });
-                resolve(fighter);
-            }
-            else {
-                reject(error);
-            }
-        });
-    });
-    return p1;
+function parseFighter(urlEnd){
+    return requestp(historyUrl(urlEnd)).then(
+        function(body){
+            var $ = cheerio.load(body);
+            var fighter = {
+                fighterID: getID(urlEnd),
+                 props:{
+                     name: $('.mod-content h1').html() ||  '',
+                     nickname: $(".player-metadata li:contains('Nickname')").contents().eq(1).text() ||  '',
+                     img: $(".main-headshot img").attr("src") ||  ''
+                 },
+                wins: []
+            };
+            $('.evenrow, .oddrow').each( function(i,val){
+                if(isWin($(val))){
+                    fighter.wins.push(parseWin(fighter.fighterID, $(val)));
+                }
+            });
+            console.log("FIGHTER ID "+fighter.fighterID);
+            return  fighter;
+        }
+    );
 }
 
 function isWin(tr){
