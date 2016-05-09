@@ -134,6 +134,9 @@ function fighter(url_end){
     return p1;
 }
 
+function isWin(tr){
+    return tr.find('td').eq(3).text()=='Win';
+}
 
 function get_fighters(fighter, callback){
     url = "http://espn.go.com/mma/fighters";
