@@ -1,0 +1,44 @@
+{
+  "name": "mmath",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "cheerio": "^0.20.0",
+    "autocomplete": "^0.0.1",
+    "body-parser": "^1.13.3",
+    "cookie-parser": "^1.3.5",
+    "crypto": "^0.0.3",
+    "express": "^4.13.4",
+    "jade": "^1.11.0",
+    "debug": "^2.2.0",
+    "jsonfile": "^2.3.0",
+    "morgan": "^1.6.1",
+    "moment": "^2.13.0",
+    "neo4j-driver": "^1.0.0",
+    "request-promise": "^3.0.0",
+    "serve-favicon": "^2.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "bin/www",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TannerBaldus/mmath.git"
+  },
+  "keywords": [
+    "mma",
+    "mixed",
+    "marital",
+    "arts",
+    "ufc"
+  ],
+  "author": "Tanner Baldus",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TannerBaldus/mmath/issues"
+  },
+  "homepage": "https://github.com/TannerBaldus/mmath#readme"
+}
