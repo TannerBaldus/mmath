@@ -201,19 +201,13 @@ function parseListPage(letter){
 
 
 function main(){
-    var alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
-    'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
-    Promise.all(alphabet.map(parseListPage)).then(
+    parseListPage(process.argv[2]).then(
         function(results){
             var urls = [].concat.apply([], results);
             return shuffleArray(urls);
         }).then(
             function(urls){
-                return Promise.all(urls.map(getFighter));
-        }).then(function(val){
-            console.log("Done");
-            session.close();
-            process.exit();
+                return urls.forEach((url, i) =>getFighter(url));
         }).catch(function(err){
             console.error(err);
             console.error(err.stack);
@@ -222,6 +216,7 @@ function main(){
 
 module.exports = {
     parseFighter: parseFighter,
+    parseListPage: parseListPage,
     fighterToDB: fighterToDB,
     getFighter: getFighter
 };
