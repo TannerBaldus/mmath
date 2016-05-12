@@ -145,7 +145,13 @@ function isWin(tr){
 }
 
 function parseFighter(urlEnd){
-    return requestp(historyUrl(urlEnd)).then(
+    var options ={
+        url:historyUrl(urlEnd),
+        headers: {
+            'User-Agent': 'AppleWebKit/537.36 (KHTML, like Gecko)'
+        },
+    }
+    return requestp(options).then(
         function(body){
             var $ = cheerio.load(body);
             var fighter = {
