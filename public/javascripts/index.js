@@ -14,21 +14,19 @@ $().ready(
     }
   });
 
-  engine.initialize();
-  // passing in `null` for the `options` arguments will result in the default
-  // options being used
-  $('#bloodhound .typeahead').typeahead(null, {
-    name: 'engine',
-    limit:10,
-    source: engine.ttAdapter(),
-    displayKey: "name",
-    templates: {
+
+var typeaheadOptions = {
+  name: 'engine',
+  limit:10,
+  source: engine.ttAdapter(),
+  displayKey: "name",
+  templates: {
     empty: [
       '<div class="empty-message">',
         'Unable to find a fighter with the current query',
       '</div>'
     ].join('\n'),
-    suggestion: function (data) { return "<p>"+data.name+"</p>";}
+    suggestion: function(data){return Handlebars.compile('<li img={{img}} id={{fighterID}}>{{name}}</li>')(data);}
   }
 
   });
