@@ -28,6 +28,17 @@ var typeaheadOptions = {
     ].join('\n'),
     suggestion: function(data){return Handlebars.compile('<li img={{img}} id={{fighterID}}>{{name}}</li>')(data);}
   }
+};
 
+  engine.initialize();
+  // passing in `null` for the `options` arguments will result in the default
+  // options being used
+$('#bloodhound .typeahead').typeahead(null, typeaheadOptions)
+  .on('typeahead:selected', function (obj, datum) {
+    $('#winner img').attr('src', datum.img);
+    $('#winner').attr('data-internalid', datum.fighterID);
+
+    console.log(obj);
+    console.log(datum);
   });
 });
