@@ -5,6 +5,10 @@ $().ready(
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     prefetch: 'ufcFighters.json',
     ttl:0,
+    remote: {
+      wildcard: "%query",
+      url: "api/fighters/search?q=%query"
+    },
     suggestion: function(data) {
     console.log(data);
     return '<p><strong>' + data.name + '</strong></p>';
