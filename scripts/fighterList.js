@@ -2,8 +2,6 @@ var jsonfile = require('jsonfile');
 var cheerio = require('cheerio');
 var requestp = require('request-promise');
 
-
-
 /**
 * Using the rest api gets a json string of all nodes in the db
 * @return {string}  an Array instance witht the contents shuffled.
@@ -22,26 +20,37 @@ function getNeo4jJson(){
       headers: headers,
       body: dataString
   };
-
   return requestp(options);
-
 }
 
+
+function addTokenList(token, fighterObj, collectionObj){
+  if(!collectionObj[token]){
+    collectionObj[token] = [];
+  }
+  collectionObj[token].push(fighterObj);
+}
 
 /**
 * Using the rest api gets a json string of all nodes in the db
 * @return {string}  an Array instance witht the contents shuffled.
 */
 function formatNeo4jResponse(noe4jReponse){
-  var formmatedObj= {};
+  var formattedObj= {};
   var r= JSON.parse(noe4jReponse);
   r.results[0].data.forEach(i => {
     fighterObj = i.row[0];
+
     if(fighterObj.name){
-      formmatedObj[fighterObj.name] = fighterObj;
+      addTokenList(fighterObj.name, fighterObj, formattedObj);
+      addTokenList(fighterObj.name.split().slice(-1), fighterObj, formattedObj);
     }
-  });
-  return  formmatedObj;
+    if(fighterObj.nickname){
+        addTokenList(fighterObj.nickname.replace('The ',''), fighterObj, formattedObj);
+    }
+
+    });
+  return  formattedObj;
 }
 
 /**
@@ -59,7 +68,7 @@ function getUFCRoster(allFighters){
     wikitables.find('span.fn').each((i,v) => {
         var fighterName = $(v).text();
         var fighterObj = allFighters[fighterName];
-        ufcArr.push(fighterObj);
+        ufcArr.concat(fighterObj);
     });
     return ufcArr;
   });
