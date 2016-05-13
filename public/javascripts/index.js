@@ -10,8 +10,7 @@ $().ready(
       url: "api/fighters/search?q=%query"
     },
     suggestion: function(data) {
-    console.log(data);
-    return '<p><strong>' + data.name + '</strong></p>';
+    return Handlebars.compile('<li img={{img}} id={{fighterID}}>{{name}}</li>')(data);
     }
   });
 
