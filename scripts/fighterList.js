@@ -43,13 +43,13 @@ function formatNeo4jResponse(noe4jReponse){
 
     if(fighterObj.name){
       addTokenList(fighterObj.name, fighterObj, formattedObj);
-      addTokenList(fighterObj.name.split().slice(-1), fighterObj, formattedObj);
+      addTokenList(fighterObj.name.split(' ').slice(-1), fighterObj, formattedObj);
     }
     if(fighterObj.nickname){
         addTokenList(fighterObj.nickname.replace('The ',''), fighterObj, formattedObj);
     }
 
-    });
+  });
   return  formattedObj;
 }
 
