@@ -1,6 +1,7 @@
 "use strict";
 var requestp = require("request-promise");
 var cheerio = require("cheerio");
+var crypto = require('crypto')
 var moment = require('moment');
 var neo4j = require('neo4j-driver').v1;
 var UUID = require('uuid-js');
@@ -67,8 +68,8 @@ function parseWin(winnerID, tr){
 	 };
     win.date = moment(tr.find('td').eq(0).text(), 'MMM, DD YYY').toISOString();
     var loserEl = tr.find('td a').eq(1);
-    win.loserID = getID(loserEl.attr('href'));
     win.loserName = loserEl.text().trim();
+    win.loserID = loserEl ? getID(loserEl.attr('href')) : crypto.createHash('md5').update(win.loserName).digest('hex');
     win.method = tr.find('td').eq(4).text();
     return win;
     }
