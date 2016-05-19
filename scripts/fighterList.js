@@ -35,9 +35,9 @@ function addTokenList(token, fighterObj, collectionObj){
 * Using the rest api gets a json string of all nodes in the db
 * @return {string}  an Array instance witht the contents shuffled.
 */
-function formatNeo4jResponse(noe4jReponse){
+function formatNeo4jResponse(neo4jResponse){
   var formattedObj= {};
-  var r= JSON.parse(noe4jReponse);
+  var r= JSON.parse(neo4jResponse);
   r.results[0].data.forEach(i => {
     fighterObj = i.row[0];
 
@@ -65,26 +65,38 @@ function getUFCRoster(allFighters){
     var $ = cheerio.load(body);
     var wikitables = $('.wikitable').slice(2);
     var ufcArr = [];
+
     wikitables.find('span.fn').each((i,v) => {
         var fighterName = $(v).text();
-        var fighterObj = allFighters[fighterName];
-        ufcArr.concat(fighterObj);
+        var fighterObjs = allFighters[fighterName];
+        // Sometimes the wiki fighter name doesn't match the espn name
+        // e.g. Seohee Ham vs Se Seo hee ham
+        if(fighterObjs){
+          ufcArr.push(fighterObjs);
+        }
     });
-    return ufcArr;
+    return [].concat.apply([], ufcArr);
   });
 }
 
 
 function main(){
   getNeo4jJson()
-  .then(noe4jReponse => formatNeo4jResponse(noe4jReponse))
+  .then(neo4jResponse => formatNeo4jResponse(neo4jResponse))
   .then(formattedObj => {
-    jsonfile.writeFile( 'public/allFighters.json', formattedObj, e => {if(e){console.error(e);}});
+    jsonfile.writeFile( 'routes/allFighters.json', formattedObj, e =>{ if(e){console.error(e);}});
     return formattedObj;
   })
   .then(allFighters => getUFCRoster(allFighters))
-  .then(ufcArr => jsonfile.writeFile('public/ufcFighters.json', ufcArr, e => {if(e) console.err(err);}))
+  .then(ufcArr => jsonfile.writeFile('public/ufcFighters.json', ufcArr, e => {if(e){console.error(e);}}))
   .catch(err => console.error(err+err.stack));
 }
 
-main();
+module.exports = {
+  getNeo4jJson: getNeo4jJson,
+  formatNeo4jResponse: formatNeo4jResponse
+};
+
+if (require.main === module) {
+    main();
+}
