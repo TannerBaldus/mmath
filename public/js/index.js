@@ -56,7 +56,6 @@ $().ready(
 
         var $winnerInput = $("#winner .tt-input");
         $winnerInput.on('input', function() {
-            console.log("INPUT EVENT");
             if (!$winnerInput.val()) {
                 $("#winner input").attr('size', $winnerInput.attr('placeholder').length);
                 $("#winner").attr("data-fighter-id", "");
@@ -70,4 +69,21 @@ $().ready(
                 $("#loser").attr("data-fighter-id", "");
             }
         });
+
+        $('.nl-submit').click(function() {
+            var loserID = $('#loser').attr('data-fighter-id');
+            var winnerID = $('#winner').attr('data-fighter-id');
+            if (!(loserID && winnerID)) {
+                swal({
+                    title: "Invalid Fighter",
+                    text: "Pick a fighter from the autocomplete dropdown.",
+                    type: "error",
+                    confirmButtonText: "Ok."
+                });
+            } else {
+                var proofURL = '/proof.html?' + "winnerID=" + winnerID + "&loserID=" + loserID;
+                window.location.href = proofURL;
+            }
+        });
+
     });
