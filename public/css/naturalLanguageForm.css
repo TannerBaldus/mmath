@@ -1,0 +1,136 @@
+/*----------Natural Lanaguage Form Style---------
+Style with slight modifications from MaryLou at codrops
+http://tympanus.net/codrops/2013/05/21/natural-language-form-with-custom-input-elements/
+*/
+
+/* general style for the form */
+.nl-form {
+    width: 100%;
+    margin: 1em auto 0 auto;
+    font-size: 4em;
+    line-height: 1.5;
+}
+.nl-form .transition-phrase {
+    padding-top: .5em;
+}
+
+/* normalize the input elements, make them look like everything else */
+
+.nl-form input, .nl-form select, .nl-form button {
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+.nl-form input:focus {
+    outline: none;
+}
+
+/* custom field (drop-down, text element) styling
+the toggle is the visible part in the form */
+
+.nl-field-toggle, .nl-form input, .nl-form select {
+    line-height: inherit;
+    display: inline-block;
+    cursor: pointer;
+    border-bottom: 1px dashed #fff;
+}
+
+.nl-form #loser {
+    color: #be2a2a;
+}
+
+.nl-form #winner {
+    color: #0182b2;
+}
+
+.nl-form .nl-field-go {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.1);
+    width: 1.8em;
+    text-align: center;
+    color: transparent;
+}
+.nl-field-go:before {
+    content: "\e001";
+    font-size: 75%;
+    color: #fff;
+    width: 100%;
+    line-height: 2.5;
+    display: block;
+}
+
+/* custom placeholder color */
+
+input::-webkit-input-placeholder {
+    color: rgba(255, 255, 255, 0.8);
+}
+input:active::-webkit-input-placeholder, input:focus::-webkit-input-placeholder {
+    color: rgba(255, 255, 255, 0.2);
+}
+input::-moz-placeholder {
+    color: rgba(255, 255, 255, 0.8);
+}
+input:active::-moz-placeholder, input:focus::-moz-placeholder {
+    color: rgba(255, 255, 255, 0.2);
+}
+input:-ms-input-placeholder {
+    color: rgba(255, 255, 255, 0.8);
+}
+input:active::-ms-input-placeholder, input:focus::-ms-input-placeholder {
+    color: rgba(255, 255, 255, 0.2);
+}
+
+/* example field below text input */
+
+
+/* submit button */
+
+.nl-submit-wrap {
+    margin-top: 0.4em;
+}
+.nl-form .nl-submit {
+    border: 1px solid #fff;
+    line-height: 3;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    background: transparent;
+    color: #fff;
+    padding: 0 1em 0 0;
+    font-size: 40%;
+    font-weight: bold;
+    letter-spacing: 3px;
+}
+
+.nl-submit:before {
+    content: "\e001";
+    color: #fff;
+    float: left;
+    padding: 0 0.7em;
+    margin: 0 0.8em 0 0;
+    background: transparent;
+}
+
+@media screen and (max-width: 45em) {
+    .nl-form {
+        font-size: 3em;
+    }
+}
+@media screen and (max-width: 25em) {
+    .nl-form {
+        font-size: 2em;
+    }
+}
