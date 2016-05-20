@@ -45,10 +45,12 @@ $().ready(
         $('#winner .typeahead').typeahead(null, typeaheadOptions).on('typeahead:selected',
             function(obj, datum) {
                 $("#winner input").attr('size', datum.name.length);
+                $("#winner").attr("data-fighter-id", datum.fighterID);
             });
         $('#loser .typeahead').typeahead(null, typeaheadOptions).on('typeahead:selected',
             function(obj, datum) {
                 $("#loser input").attr('size', datum.name.length);
+                $("#loser").attr("data-fighter-id", datum.fighterID);
             });
 
 
@@ -57,6 +59,7 @@ $().ready(
             console.log("INPUT EVENT");
             if (!$winnerInput.val()) {
                 $("#winner input").attr('size', $winnerInput.attr('placeholder').length);
+                $("#winner").attr("data-fighter-id", "");
             }
         });
 
@@ -64,6 +67,7 @@ $().ready(
         $loserInput.on('input', function() {
             if (!$loserInput.val()) {
                 $loserInput.attr('size', $loserInput.attr('placeholder').length);
+                $("#loser").attr("data-fighter-id", "");
             }
         });
     });
