@@ -14,6 +14,14 @@ autocomplete.initialize(function(onReady) {
 
 var router = express.Router();
 
+
+/**
+* Removes duplicate fighter objects from and array of fighter objects.
+* We do this because since we mapped multiple tokens to the same fighter,
+* there might be the same fighter obj in the search results
+* @param {array} an Array instance of fighter objects
+* @return {boolean}  an Array instance of fighter objects with no duplicates.
+*/
 function dedupFighters(fighterList){
     var dedupedArr = [];
     var seenIDs = {};
@@ -26,9 +34,15 @@ function dedupFighters(fighterList){
     return dedupedArr;
 }
 
+/**
+* Uses a trie to find fighters that might autocomplete from the query.
+* Sends an array of fighter objects as a response.
+* @param {req} a Reqest object
+* @param {res} a Response object
+* @return
+*/
 router.get('/fighters/search*', function (req, res, next){
     var searchQuery = req.query.q;
-
     var searchResults  = autocomplete.search(searchQuery);
     console.log(searchResults);
     var fighterObjs = dedupFighters([].concat.apply([], searchResults.map(i => allFighters[i])));
@@ -51,6 +65,14 @@ function formatQueryReord(record){
 
 
 
+
+/**
+* Queries the Neo4j DB for a win path between the fighters with the winnerID
+* and loserID.
+* @param {winnerID} a String of the winning fighter ID
+* @param {loserID} a String of the losing fighter ID
+* @return {Obj} and Object of the form {winner:nodeObj, loser:nodeObj, path:pathObj}
+*/
 function getPath(winnerID, loserID){
   var session = driver.session();
   var query = [
@@ -66,7 +88,13 @@ function getPath(winnerID, loserID){
   });
 }
 
-
+/**
+* Queries the Neo4j DB from the winnerID and loserID from the req obj
+* and sends the formatted path obj as a response.
+* @param {req} a Reqest object
+* @param {res} a Response object
+* @return
+*/
 router.get('/paths*', function(req, res, next){
     var winnerID = req.query.winnerID;
     var loserID = req.query.loserID;
