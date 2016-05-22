@@ -1,19 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html class="full">
 
 <head>
     <title>MMA MATH</title>
-    <script src="http://code.jquery.com/jquery-1.11.0.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <script type="text/javascript" src="http://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.js"></script>
-    <script type="text/javascript" src="/js/index.js"></script>
-    <!-- <link rel="stylesheet" href="/css/index.css"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/bower_components/sweetalert/dist/sweetalert.css">
+    <link rel="stylesheet" href="/css/proof_bundle.css">
+
+    <script src="/bower_components/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/bower_components/handlebars/handlebars.min.js"></script>
+    <script src="/bower_components/typeahead.js/dist/typeahead.bundle.min.js">/</script>
+    <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/js/proof.js"></script>
+
+
 </head>
+
 <body>
-  <div class="row">
-    <div class="col-md-5">
-      <img class="img-fluid"  width="300px" height="218px" src="http://a.espncdn.com/combiner/i?img=/i/headshots/mma/players/full/2335639.png">
+
+    <nav class="navbar">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <i class="fa fa-bars"></i>
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">MMA MATH</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#">ABOUT</a></li>
+                    <li><a href="https://tannerbaldus.com">NEED A DEV?</a></li>
+                    <li><a href="https://github.com/TannerBaldus/mmath">SOURCE</a></li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <div class="container">
+        <div class="row matchup">
+        </div>
+
+        <div class="row proof">
+        </div>
+        <div class="row">
+            <div class="button-wrap">
+                <button class="custom-button"><a href="/">Try Another</a></button>
+                <button class="custom-button reverse">Reverse</button>
+            </div>
+
+        </div>
     </div>
   </div>
 </body>
