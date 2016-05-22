@@ -16,7 +16,7 @@ http://tympanus.net/codrops/2013/05/21/natural-language-form-with-custom-input-e
 
 /* normalize the input elements, make them look like everything else */
 
-.nl-form input, .nl-form select, .nl-form button {
+.nl-form input, .nl-form select{
     border: none;
     background: transparent;
     font-family: inherit;
@@ -93,36 +93,6 @@ input:active::-ms-input-placeholder, input:focus::-ms-input-placeholder {
     color: rgba(255, 255, 255, 0.2);
 }
 
-/* example field below text input */
-
-
-/* submit button */
-
-.nl-submit-wrap {
-    margin-top: 0.4em;
-}
-.nl-form .nl-submit {
-    border: 1px solid #fff;
-    line-height: 3;
-    text-transform: uppercase;
-    cursor: pointer;
-    position: relative;
-    background: transparent;
-    color: #fff;
-    padding: 0 1em 0 0;
-    font-size: 40%;
-    font-weight: bold;
-    letter-spacing: 3px;
-}
-
-.nl-submit:before {
-    content: "\e001";
-    color: #fff;
-    float: left;
-    padding: 0 0.7em;
-    margin: 0 0.8em 0 0;
-    background: transparent;
-}
 
 @media screen and (max-width: 45em) {
     .nl-form {

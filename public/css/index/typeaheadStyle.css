@@ -22,3 +22,11 @@
     color: #fff;
     background-color: #be2a2a;
 }
+
+.loser {
+    color: #be2a2a;
+}
+
+.winner {
+    color: #0182b2;
+}

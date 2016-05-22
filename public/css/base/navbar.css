@@ -1,0 +1,15 @@
+.navbar-default {
+  background-color: transparent;
+  border: none;
+}
+
+.navbar-brand{
+  color: #be2a2a;
+  font-family:'League Gothic';
+  font-size: 24px;
+}
+
+.navbar-collapse a{
+  color: #0182b2;
+  font-family: "aileron_semibold"
+}

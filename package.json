@@ -23,7 +23,8 @@
   "scripts": {
     "start": "bin/www",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "concat-css": "cat public/css/*.css > bundle.css"
+    "bundle-index-css": "find public/css/base public/css/index -type f -name '*.css' ! -iname '*bundle.css'  -exec cat {} \\+  > index_bundle.css",
+    "bundle-proof-css": "find public/css/base public/css/proof -type f -name '*.css' ! -iname '*bundle.css'  -exec cat {} \\+ > proof_bundle.css"
   },
   "repository": {
     "type": "git",

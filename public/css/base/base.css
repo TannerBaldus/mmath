@@ -1,0 +1,73 @@
+@import url(http://fonts.googleapis.com/css?family=Lato:300,400,700);
+
+*, *:after, *:before {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.full {
+    background: linear-gradient( rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url('../img/mount-color.jpg') no-repeat center center fixed;
+    min-height: 100vh;
+    height: 100vh;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+    font-size: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: 'Lato', Calibri, Arial, sans-serif;
+    color: #fff;
+    background: transparent;
+    font-weight: 300;
+    overflow-x: hidden;
+}
+
+.container {
+    text-align: center;
+}
+.main, .container > header {
+    margin: 0 auto;
+    padding: 2em;
+}
+.container > header {
+    text-align: center;
+    background: rgba(0, 0, 0, 0.01);
+}
+
+.custom-button-wrap {
+    margin-top: 0.4em;
+}
+.custom-button {
+    border: 1px solid #fff;
+    line-height: 3;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    background: transparent;
+    color: #fff;
+    padding: 0 1em 0 0;
+    font-size: 40%;
+    font-weight: bold;
+    letter-spacing: 3px;
+}
+.custom-button a {
+    color: #fff;
+}
+.custom-button:before {
+    content: "\e001";
+    color: #fff;
+    float: left;
+    padding: 0 0.7em;
+    margin: 0 0.8em 0 0;
+    background: transparent;
+}
