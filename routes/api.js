@@ -68,11 +68,12 @@ function getPath(winnerID, loserID){
 
 
 router.get('/paths*', function(req, res, next){
-    var winner = req.query.winner;
-    var loser = req.query.loser;
-    getPath(winner, loser).then( path =>{
+    var winnerID = req.query.winnerID;
+    var loserID = req.query.loserID;
+    getPath(winnerID, loserID).then( path =>{
       res.send(path);
-    });
+    })
+    .catch(err => console.log(err));
 });
 
 
