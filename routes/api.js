@@ -62,13 +62,7 @@ function getPath(winnerID, loserID){
   var queryPromise = session.run(query, {winnerID:winnerID, loserID:loserID});
   return queryPromise.then( result => {
     session.close();
-    if(!result.records){
-      return [];
-    }
-    else{
-      return result.records[0].get('p').segments;
-    }
-
+    return formatQueryReord(result.records[0]);
   });
 }
 
