@@ -36,6 +36,20 @@ router.get('/fighters/search*', function (req, res, next){
 });
 
 
+/**
+* Formats a Neo4j query to an easier to digest object
+* @param {record} a Neo4j record
+* @return {Obj} and Object of the form {returnFieldName:returnFieldValue}
+*/
+function formatQueryReord(record){
+  var formattedObj = {};
+  record.keys.forEach(key=> {
+    console.log(key);
+    formattedObj[key] = record._fields[record._fieldLookup[key]];});
+  return formattedObj;
+}
+
+
 
 function getPath(winnerID, loserID){
   var session = driver.session();
