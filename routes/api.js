@@ -40,10 +40,10 @@ router.get('/fighters/search*', function (req, res, next){
 function getPath(winnerID, loserID){
   var session = driver.session();
   var query = [
-    'match (w:Fighter {fighterID:{winnerID} })',
-    'match (l:Fighter {fighterID:{loserID}})',
-    'match p=shortestPath((w)-[:Beat*..100]->(l))',
-    'return p'
+    'match (winner:Fighter {fighterID:{winnerID} })',
+    'match (loser:Fighter {fighterID:{loserID}})',
+    'optional match path=shortestPath((winner)-[:Beat*..100]->(loser))',
+    'return winner, loser, path'
   ].join('\n');
   var queryPromise = session.run(query, {winnerID:winnerID, loserID:loserID});
   return queryPromise.then( result => {
