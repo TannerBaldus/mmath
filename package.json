@@ -28,6 +28,7 @@
   "scripts": {
     "start": "bin/www",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "bower install && npm run bundle-css",
     "bundle-css": "npm run bundle-index-css && npm run bundle-proof-css && npm run bundle-base-css",
     "bundle-index-css": "find public/css/base public/css/index -type f -name '*.css' ! -iname '*bundle.css'  -exec cat {} \\+  > public/css/index_bundle.css",
     "bundle-proof-css": "find public/css/base public/css/proof -type f -name '*.css' ! -iname '*bundle.css'  -exec cat {} \\+ > public/css/proof_bundle.css",
