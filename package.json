@@ -23,8 +23,10 @@
   "scripts": {
     "start": "bin/www",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "bundle-index-css": "find public/css/base public/css/index -type f -name '*.css' ! -iname '*bundle.css'  -exec cat {} \\+  > index_bundle.css",
-    "bundle-proof-css": "find public/css/base public/css/proof -type f -name '*.css' ! -iname '*bundle.css'  -exec cat {} \\+ > proof_bundle.css"
+    "bundle-css": "npm run bundle-index-css && npm run bundle-proof-css && npm run bundle-base-css",
+    "bundle-index-css": "find public/css/base public/css/index -type f -name '*.css' ! -iname '*bundle.css'  -exec cat {} \\+  > public/css/index_bundle.css",
+    "bundle-proof-css": "find public/css/base public/css/proof -type f -name '*.css' ! -iname '*bundle.css'  -exec cat {} \\+ > public/css/proof_bundle.css",
+    "bundle-base-css": "find public/css/base  -type f -name '*.css' ! -iname '*bundle.css'  -exec cat {} \\+ > public/css/base_bundle.css"
   },
   "repository": {
     "type": "git",
