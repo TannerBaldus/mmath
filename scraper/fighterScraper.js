@@ -1,12 +1,13 @@
 "use strict";
 var requestp = require("request-promise");
+var config = require("../config");
 var Promise = require('bluebird');
 var cheerio = require("cheerio");
-var crypto = require('crypto')
+var crypto = require('crypto');
 var moment = require('moment');
 var neo4j = require('neo4j-driver').v1;
 var UUID = require('uuid-js');
-var driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "neo4j"));
+var driver = neo4j.driver(config.db.url, neo4j.auth.basic("neo4j", "neo4j"));
 var session = driver.session();
 
 
@@ -115,19 +116,9 @@ function  fighterToDB(fighter){
             "SET f += {props}",
             "RETURN f"
         ].join('\n');
-        var queryPromise = session.run(query, fighter).then(
+        return session.run(query, fighter).then(
             i => Promise.map(fighter.wins, winToDB)
         );
-        // queryPromise.then(
-        //     function(val){
-        //         console.log("Success Saved Fighter");
-        //         // fighter.wins.forEach(function(win){
-        //         //     winToDB(win);
-        //         //     resolve(fighter);
-        //         // });
-        //     }
-        // )
-    return queryPromise;
 }
 
 function isWin(tr){

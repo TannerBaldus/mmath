@@ -1,3 +1,4 @@
+var config = require('../config')
 var express = require('express');
 var jsonfile = require('jsonfile');
 var Autocomplete = require('autocomplete');
@@ -5,7 +6,7 @@ var url = require('url');
 var autocomplete = Autocomplete.connectAutocomplete();
 var allFighters = jsonfile.readFileSync('public/allFighters.json');
 var neo4j = require('neo4j-driver').v1;
-var driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", "neo4j"));
+var driver = neo4j.driver(config.db.url, neo4j.auth.basic("neo4j", "neo4j"));
 
 
 autocomplete.initialize(function(onReady) {
