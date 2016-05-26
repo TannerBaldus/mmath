@@ -70,7 +70,7 @@ function parseWin(winnerID, tr){
     win.date = moment(tr.find('td').eq(0).text(), 'MMM, DD YYY').toISOString();
     var loserEl = tr.find('td a').eq(1);
     win.loserName = loserEl.text().trim();
-    win.loserID = loserEl ? getID(loserEl.attr('href')) : crypto.createHash('md5').update(win.loserName).digest('hex');
+    win.loserID = loserEl.attr('href') ? getID(loserEl.attr('href')) : crypto.createHash('md5').update(win.loserName).digest('hex');
     win.method = tr.find('td').eq(4).text();
     return win;
     }
