@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
-  "engines":{
+  "engines": {
     "node": "4.4.4",
     "npm": "3.8.6"
   },
   "dependencies": {
     "autocomplete": "^0.0.1",
+    "bluebird": "^3.4.0",
     "body-parser": "^1.13.3",
     "bower": "^1.7.9",
     "cheerio": "^0.20.0",
