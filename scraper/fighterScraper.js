@@ -1,5 +1,6 @@
 "use strict";
 var requestp = require("request-promise");
+var Promise = require('bluebird');
 var cheerio = require("cheerio");
 var crypto = require('crypto')
 var moment = require('moment');
@@ -97,14 +98,7 @@ function winToDB(win){
         "RETURN winner.fighterID,b.method,loser.fighterID"
     ].join('\n');
     var queryPromise = session.run(query, win);
-    return queryPromise.then(function (result) {
-        console.log('Successfully saved win');
-        Promise.resolve('Success');
-    })
-    .catch(function (val) {
-        console.error(val);
-        Promise.reject('Failure');
-    });
+    return queryPromise;
 }
 
 
@@ -115,30 +109,25 @@ function winToDB(win){
 * @return {Promise} a promise that resolves on succesful query
 */
 function  fighterToDB(fighter){
-    var p1 = new Promise(function(resolve, reject){
+
         var query = [
             "MERGE (f:Fighter {fighterID: {fighterID} })",
             "SET f += {props}",
             "RETURN f"
         ].join('\n');
-        var queryPromise = session.run(query, fighter);
-        queryPromise.then(
-            function(val){
-                console.log("Success Saved Fighter");
-                fighter.wins.forEach(function(win){
-                    winToDB(win);
-                    resolve(fighter);
-                });
-            }
-        )
-        .catch(
-            function(err){
-                console.error(err);
-                reject(err);
-            }
+        var queryPromise = session.run(query, fighter).then(
+            i => Promise.map(fighter.wins, winToDB)
         );
-    });
-    return p1;
+        // queryPromise.then(
+        //     function(val){
+        //         console.log("Success Saved Fighter");
+        //         // fighter.wins.forEach(function(win){
+        //         //     winToDB(win);
+        //         //     resolve(fighter);
+        //         // });
+        //     }
+        // )
+    return queryPromise;
 }
 
 function isWin(tr){
@@ -151,7 +140,7 @@ function parseFighter(urlEnd){
         headers: {
             'User-Agent': 'AppleWebKit/537.36 (KHTML, like Gecko)'
         },
-    }
+    };
     return requestp(options).then(
         function(body){
             var $ = cheerio.load(body);
@@ -206,10 +195,13 @@ function main(){
         function(results){
             var urls = [].concat.apply([], results);
             return shuffleArray(urls);
-        }).then(
-            function(urls){
-                return urls.forEach((url, i) =>getFighter(url));
-        }).catch(function(err){
+        })
+        .then(urls => Promise.map(urls, parseFighter,  {concurrency: 10}))
+        .then(parsedFighters=>Promise.map(parsedFighters, fighterToDB), {concurrency: 10})
+        .then(j => {console.log("Done");
+        process.exit();
+        })
+        .catch(function(err){
             console.error(err);
             console.error(err.stack);
         });
@@ -221,6 +213,7 @@ module.exports = {
     fighterToDB: fighterToDB,
     getFighter: getFighter
 };
+
 
 if (require.main === module) {
     main();
