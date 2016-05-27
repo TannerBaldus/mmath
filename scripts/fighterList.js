@@ -26,9 +26,9 @@ function getNeo4jJson(){
 
 function addTokenList(token, fighterObj, collectionObj){
   if(!collectionObj[token]){
-    collectionObj[token] = [];
+    collectionObj[token.toLowerCase()] = [];
   }
-  collectionObj[token].push(fighterObj);
+  collectionObj[token.toLowerCase()].push(fighterObj);
 }
 
 /**
@@ -40,10 +40,10 @@ function formatNeo4jResponse(neo4jResponse){
   var r= JSON.parse(neo4jResponse);
   r.results[0].data.forEach(i => {
     fighterObj = i.row[0];
-
+    console.log(fighterObj);
     if(fighterObj.name){
       addTokenList(fighterObj.name, fighterObj, formattedObj);
-      addTokenList(fighterObj.name.split(' ').slice(-1), fighterObj, formattedObj);
+      addTokenList(fighterObj.name.split(' ').slice(-1)[0], fighterObj, formattedObj);
     }
     if(fighterObj.nickname){
         addTokenList(fighterObj.nickname.replace('The ',''), fighterObj, formattedObj);
@@ -67,7 +67,7 @@ function getUFCRoster(allFighters){
     var ufcArr = [];
 
     wikitables.find('span.fn').each((i,v) => {
-        var fighterName = $(v).text();
+        var fighterName = $(v).text().toLowerCase();
         var fighterObjs = allFighters[fighterName];
         // Sometimes the wiki fighter name doesn't match the espn name
         // e.g. Seohee Ham vs Se Seo hee ham

@@ -43,7 +43,7 @@ function dedupFighters(fighterList){
 * @return
 */
 router.get('/fighters/search*', function (req, res, next){
-    var searchQuery = req.query.q;
+    var searchQuery = req.query.q.toLowerCase();
     var searchResults  = autocomplete.search(searchQuery);
     console.log(searchResults);
     var fighterObjs = dedupFighters([].concat.apply([], searchResults.map(i => allFighters[i])));
@@ -63,9 +63,6 @@ function formatQueryReord(record){
     formattedObj[key] = record._fields[record._fieldLookup[key]];});
   return formattedObj;
 }
-
-
-
 
 /**
 * Queries the Neo4j DB for a win path between the fighters with the winnerID
