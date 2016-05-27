@@ -7,7 +7,7 @@ var crypto = require('crypto');
 var moment = require('moment');
 var neo4j = require('neo4j-driver').v1;
 var UUID = require('uuid-js');
-var driver = neo4j.driver(config.db.url, neo4j.auth.basic("neo4j", "neo4j"));
+var driver = neo4j.driver(config.db.url, neo4j.auth.basic(config.db.username, config.db.password));
 var session = driver.session();
 
 

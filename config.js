@@ -4,7 +4,8 @@ var config = {};
 config.db = {};
 config.scraper = {};
 
-dbUrl = require('url').parse(process.env.GRAPHENEDB_URL);
-config.db.url = dbUrl || "bolt://localhost";
+config.db.url =  "bolt://localhost";
+config.db.username = "neo4j";
+config.db.password = "neo4j";
 config.scraper.userAgent = "request";
 module.exports = config;
