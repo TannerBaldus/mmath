@@ -179,7 +179,6 @@ function parseListPage(letter){
     return urlsPromise;
 }
 
-
 function main(){
     parseListPage(process.argv[2]).then(
         function(results){
