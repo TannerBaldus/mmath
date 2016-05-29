@@ -43,4 +43,11 @@ jspm_packages
 
 bower_components
 .DS_store
+
+#Ignore Bundled Css
 *bundle.css
+
+#Ignore Real Config File
+config.js
+
+
