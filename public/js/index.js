@@ -26,7 +26,7 @@ $().ready(
             displayKey: "name",
             templates: {
                 empty: [
-                    '<p>Unable to find a fighter with the current query</p>',
+                    '<p class="tt-suggestion">Unable to find a fighter with the current query</p>',
                 ].join('\n'),
                 suggestion: function(data) {
                     var displayName = data.name;
