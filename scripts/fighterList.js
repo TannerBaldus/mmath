@@ -1,15 +1,17 @@
 var jsonfile = require('jsonfile');
 var cheerio = require('cheerio');
+var config = require('../config')
 var requestp = require('request-promise');
 
 /**
 * Using the rest api gets a json string of all nodes in the db
-* @return {string}  an Array instance witht the contents shuffled.
+* @return {string}  an Array instance with the contents shuffled.
 */
 function getNeo4jJson(){
   var headers = {
       'accept': 'application/json',
-      'content-type': 'application/json'
+      'content-type': 'application/json',
+      'Authorization': "Basic " + new Buffer(config.db.username + ":" + config.db.password).toString("base64")
   };
 
   var dataString = '{"statements":[{"statement":"MATCH (n) RETURN (n)"}]}';
