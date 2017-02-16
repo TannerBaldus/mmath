@@ -14,7 +14,36 @@ autocomplete.initialize(function(onReady) {
 });
 
 var router = express.Router();
+/**
+* Queries the Neo4j DB from the winnerID and loserID from the req obj
+* and sends the formatted path obj as a response.
+* @param {req} a Reqest object
+* @param {res} a Response object
+* @return
+*/
+router.get('/paths*', function(req, res, next){
+    var winnerID = req.query.winnerID;
+    var loserID = req.query.loserID;
+    getPath(winnerID, loserID).then( path =>{
+      res.send(path);
+    })
+    .catch(err => console.log(err));
+});
 
+/**
+* Uses a trie to find fighters that might autocomplete from the query.
+* Sends an array of fighter objects as a response.
+* @param {req} a Reqest object
+* @param {res} a Response object
+* @return
+*/
+router.get('/fighters/search*', function (req, res, next){
+    var searchQuery = req.query.q.toLowerCase();
+    var searchResults  = autocomplete.search(searchQuery);
+    console.log(searchResults);
+    var fighterObjs = dedupFighters([].concat.apply([], searchResults.map(i => allFighters[i])));
+    res.send(fighterObjs);
+});
 
 /**
 * Removes duplicate fighter objects from and array of fighter objects.
@@ -35,34 +64,6 @@ function dedupFighters(fighterList){
     return dedupedArr;
 }
 
-/**
-* Uses a trie to find fighters that might autocomplete from the query.
-* Sends an array of fighter objects as a response.
-* @param {req} a Reqest object
-* @param {res} a Response object
-* @return
-*/
-router.get('/fighters/search*', function (req, res, next){
-    var searchQuery = req.query.q.toLowerCase();
-    var searchResults  = autocomplete.search(searchQuery);
-    console.log(searchResults);
-    var fighterObjs = dedupFighters([].concat.apply([], searchResults.map(i => allFighters[i])));
-    res.send(fighterObjs);
-});
-
-
-/**
-* Formats a Neo4j query to an easier to digest object
-* @param {record} a Neo4j record
-* @return {Obj} and Object of the form {returnFieldName:returnFieldValue}
-*/
-function formatQueryReord(record){
-  var formattedObj = {};
-  record.keys.forEach(key=> {
-    console.log(key);
-    formattedObj[key] = record._fields[record._fieldLookup[key]];});
-  return formattedObj;
-}
 
 /**
 * Queries the Neo4j DB for a win path between the fighters with the winnerID
@@ -87,21 +88,16 @@ function getPath(winnerID, loserID){
 }
 
 /**
-* Queries the Neo4j DB from the winnerID and loserID from the req obj
-* and sends the formatted path obj as a response.
-* @param {req} a Reqest object
-* @param {res} a Response object
-* @return
+* Formats a Neo4j query to an easier to digest object
+* @param {record} a Neo4j record
+* @return {Obj} and Object of the form {returnFieldName:returnFieldValue}
 */
-router.get('/paths*', function(req, res, next){
-    var winnerID = req.query.winnerID;
-    var loserID = req.query.loserID;
-    getPath(winnerID, loserID).then( path =>{
-      res.send(path);
-    })
-    .catch(err => console.log(err));
-});
-
-
+function formatQueryReord(record){
+  var formattedObj = {};
+  record.keys.forEach(key=> {
+    console.log(key);
+    formattedObj[key] = record._fields[record._fieldLookup[key]];});
+  return formattedObj;
+}
 
 module.exports = router;
