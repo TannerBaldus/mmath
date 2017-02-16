@@ -13,10 +13,42 @@ var session = driver.session();
 
 moment.locale('us');
 
+function main(){
+    parseListPage(process.argv[2]).then(
+        function(results){
+            var urls = [].concat.apply([], results);
+            return shuffleArray(urls);
+        })
+        .then(urls => Promise.map(urls, parseFighter,  {concurrency: 10}))
+        .then(parsedFighters=>Promise.map(parsedFighters, fighterToDB), {concurrency: 10})
+        .then(j => {console.log("Done");
+        process.exit();
+        })
+        .catch(function(err){
+            console.error(err);
+            console.error(err.stack);
+        });
+}
+
+function parseListPage(letter){
+    console.log(letter);
+    var url = "http://espn.go.com/mma/fighters?search="+letter;
+    var urlsPromise = requestp(url).then(function(body){
+        var $ = cheerio.load(body);
+        var urls = [];
+        var getUrl = function(val){return $(val).attr('href');};
+        $('.evenrow a, .oddrow a').each(function(i, val){
+            urls.push(getUrl(val));
+        });
+
+        return urls;
+    });
+    return urlsPromise;
+}
+
 
  /**
- * Shuffles an array using the Durstenfeld shuffle algorithm. Used for
- * opening urls in a random order as not to get blocked
+ * Used for opening urls in a random order as not to get blocked
  * @param {array} an Array instance
  * @return {boolean}  an Array instance witht the contents shuffled.
  */
@@ -31,16 +63,48 @@ function shuffleArray(array) {
 }
 
 
-/**
-* From an espn url gets the id for the fighter
-* @param {string} url the url to get the ID from
-* @return {string}  the ID from the URL of the fighter
-*/
-function getID(url){
-    var idIndex = url.indexOf("_/id");
-    return url.slice(idIndex+5, idIndex+12);
+function parseFighter(urlEnd){
+    var options ={
+        url:historyUrl(urlEnd),
+        headers: {
+            'User-Agent': 'AppleWebKit/537.36 (KHTML, like Gecko)'
+        },
+    };
+    return requestp(options).then(
+        function(body){
+            var $ = cheerio.load(body);
+            var fighter = {
+                fighterID: getID(urlEnd),
+                 props:{
+                     name: $('.mod-content h1').html() ||  '',
+                     nickname: $(".player-metadata li:contains('Nickname')").contents().eq(1).text() ||  '',
+                     img: $(".main-headshot img").attr("src") ||  ''
+                 },
+                wins: []
+            };
+            $('.evenrow, .oddrow').each( function(i,val){
+                if(isWin($(val))){
+                    fighter.wins.push(parseWin(fighter.fighterID, $(val)));
+                }
+            });
+            console.log("FIGHTER ID "+fighter.fighterID);
+            return  fighter;
+        }
+    );
 }
 
+function isWin(tr){
+    return tr.find('td').eq(3).text()=='Win';
+}
+
+/**
+* Gets the full fight history url from another url
+* @param {string} url an espn url to a fighter
+* @return {string} the full fight history page of the fighter
+*/
+function historyUrl(url){
+    return "http://espn.go.com/mma/fighter/history/_/id/"+getID(url);
+}
 
 /**
  * @typedef Win
@@ -73,17 +137,34 @@ function parseWin(winnerID, tr){
     win.loserID = loserEl.attr('href') ? getID(loserEl.attr('href')) : crypto.createHash('md5').update(win.loserName).digest('hex');
     win.method = tr.find('td').eq(4).text();
     return win;
-    }
-
-/**
-* Gets the full fight history url from another url
-* @param {string} url an espn url to a fighter
-* @return {string} the full fight history page of the fighter
-*/
-function historyUrl(url){
-    return "http://espn.go.com/mma/fighter/history/_/id/"+getID(url);
 }
 
+
+/**
+* From an espn url gets the id for the fighter
+* @param {string} url the url to get the ID from
+* @return {string}  the ID from the URL of the fighter
+*/
+function getID(url){
+    var idIndex = url.indexOf("_/id");
+    return url.slice(idIndex+5, idIndex+12);
+}
+
+/**
+* Saves a Fighter object into the neo4j databsse
+* @param {Fighter} fighter a Fighter object
+* @return {Promise} a promise that resolves on succesful query
+*/
+function  fighterToDB(fighter){
+        var query = [
+            "MERGE (f:Fighter {fighterID: {fighterID} })",
+            "SET f += {props}",
+            "RETURN f"
+        ].join('\n');
+        return session.run(query, fighter).then(
+            i => Promise.map(fighter.wins, winToDB)
+        );
+}
 
 /**
 * Saves a Win object into the neo4j databsse
@@ -101,60 +182,6 @@ function winToDB(win){
     return queryPromise;
 }
 
-
-
-/**
-* Saves a Win object into the neo4j databsse
-* @param {Win} win a Win object
-* @return {Promise} a promise that resolves on succesful query
-*/
-function  fighterToDB(fighter){
-
-        var query = [
-            "MERGE (f:Fighter {fighterID: {fighterID} })",
-            "SET f += {props}",
-            "RETURN f"
-        ].join('\n');
-        return session.run(query, fighter).then(
-            i => Promise.map(fighter.wins, winToDB)
-        );
-}
-
-function isWin(tr){
-    return tr.find('td').eq(3).text()=='Win';
-}
-
-function parseFighter(urlEnd){
-    var options ={
-        url:historyUrl(urlEnd),
-        headers: {
-            'User-Agent': 'AppleWebKit/537.36 (KHTML, like Gecko)'
-        },
-    };
-    return requestp(options).then(
-        function(body){
-            var $ = cheerio.load(body);
-            var fighter = {
-                fighterID: getID(urlEnd),
-                 props:{
-                     name: $('.mod-content h1').html() ||  '',
-                     nickname: $(".player-metadata li:contains('Nickname')").contents().eq(1).text() ||  '',
-                     img: $(".main-headshot img").attr("src") ||  ''
-                 },
-                wins: []
-            };
-            $('.evenrow, .oddrow').each( function(i,val){
-                if(isWin($(val))){
-                    fighter.wins.push(parseWin(fighter.fighterID, $(val)));
-                }
-            });
-            console.log("FIGHTER ID "+fighter.fighterID);
-            return  fighter;
-        }
-    );
-}
-
-
 function getFighter(url){
     return parseFighter(url).then(
         function(fighter){
@@ -163,38 +190,6 @@ function getFighter(url){
     );
 }
 
-function parseListPage(letter){
-    console.log(letter);
-    var url = "http://espn.go.com/mma/fighters?search="+letter;
-    var urlsPromise = requestp(url).then(function(body){
-        var $ = cheerio.load(body);
-        var urls = [];
-        var getUrl = function(val){return $(val).attr('href');};
-        $('.evenrow a, .oddrow a').each(function(i, val){
-            urls.push(getUrl(val));
-        });
-
-        return urls;
-    });
-    return urlsPromise;
-}
-
-function main(){
-    parseListPage(process.argv[2]).then(
-        function(results){
-            var urls = [].concat.apply([], results);
-            return shuffleArray(urls);
-        })
-        .then(urls => Promise.map(urls, parseFighter,  {concurrency: 10}))
-        .then(parsedFighters=>Promise.map(parsedFighters, fighterToDB), {concurrency: 10})
-        .then(j => {console.log("Done");
-        process.exit();
-        })
-        .catch(function(err){
-            console.error(err);
-            console.error(err.stack);
-        });
-}
 
 module.exports = {
     parseFighter: parseFighter,
